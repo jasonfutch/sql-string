@@ -13,6 +13,8 @@ module.exports = function sqlString(){
         self._strGroupSumValue = "";
         self._strOrderBy = "";
         self._strLimit = "";
+        self._strFrom = "";
+        self._strOffset = "";
         self._bolRadius = false;
         self._strRadiusLatField = "";
         self._strRadiusLatValue = "";
@@ -37,12 +39,14 @@ module.exports = function sqlString(){
         self._groupTypes = [];
         self._strOrderBy = "";
         self._strLimit = "";
+        self._strFrom = "";
+        self._strOffset = "";
         self._bolRadius = false;
         self._strRadiusLatField = "";
         self._strRadiusLatValue = "";
         self._strRadiusLngField = "";
         self._strRadiusLngValue = "";
-        };
+    };
 
     //COMMON FUNCTIONS
     this.clean = function(str){
@@ -73,7 +77,7 @@ module.exports = function sqlString(){
 
     this.field = function(n,v){
         var nameFound;
-        if(!v) v = '';
+        if(v===undefined) v = '';
         nameFound = false;
         var lngValues = self._aryValues.length;
         for(var i=0; i<lngValues; i++){
@@ -103,9 +107,14 @@ module.exports = function sqlString(){
         self._strHaving = str;
     };
 
+    this.fromClause = function(str){
+        self._strFrom = str;
+    };
+
     this.limit = function(limit,offset){
         if(!offset) offset = 0;
-        self._strLimit = offset+","+limit;
+        self._strLimit = limit;
+        self._strOffset = offset;
     };
 
     this.select = function(t,w){
@@ -146,7 +155,7 @@ module.exports = function sqlString(){
         if(self._strGroupBy!="") strSQL += " GROUP BY " + self._strGroupBy;
         if(self._strHaving!="") strSQL += " HAVING " + self._strHaving;
         if(self._strOrderBy!="") strSQL += " ORDER BY " + self._strOrderBy;
-        if(self._strLimit!="") if(self._bolSqlPaging==false) strSQL += " LIMIT " + self._strLimit;
+        if(self._strLimit!="" && self._bolSqlPaging==false) strSQL += " LIMIT " + self._strLimit + " OFFSET " + self._strOffset;
         if(self._bolSqlPaging==true) strSQL += " LIMIT " + self._sqlOffset + "," + self._sqlPageSize;
         return strSQL+";";
     };
@@ -177,10 +186,12 @@ module.exports = function sqlString(){
         if(self._aryValues.length>0){
             cnt = self._aryValues.length;
             for(var i=0; i<cnt; i++){
+                var value = "'" + self.clean(self._aryValues[i][1]) + "'"
+                if(self._aryValues[i][1]===null) value = null;
                 if(strValues==""){
-                    strValues += " " + self._aryValues[i][0] + "='" + self.clean(self._aryValues[i][1]) + "'";
+                    strValues += " " + self._aryValues[i][0] + "=" + value;
                 }else{
-                    strValues += ", " + self._aryValues[i][0] + "='" + self.clean(self._aryValues[i][1]) + "'";
+                    strValues += ", " + self._aryValues[i][0] + "=" + value;
                 }
             }
         }
@@ -194,7 +205,9 @@ module.exports = function sqlString(){
                 }
             }
         }
-        strSQL = "UPDATE " + t + " Set" + strValues + " WHERE " + w + ";";
+        strSQL = "UPDATE " + t + " Set" + strValues;
+        if(self._strFrom!=='') strSQL += " FROM " + self._strFrom + "";
+        strSQL += " WHERE " + w + ";";
         return strSQL;
     };
 
