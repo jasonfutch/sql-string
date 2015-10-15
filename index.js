@@ -167,12 +167,14 @@ module.exports = function sqlString(){
         strValues = "";
         var cnt = self._aryValues.length;
         for(var i=0; i<cnt; i++){
+            var value = "'" + self.clean(self._aryValues[i][1]) + "'"
+            if(self._aryValues[i][1]===null) value = null;
             if(i==(cnt-1)){
                 strNames += self._aryValues[i][0] + " ";
-                strValues += "'" + self.clean(self._aryValues[i][1]) + "'";
+                strValues += value;
             }else{
                 strNames += self._aryValues[i][0] + ", ";
-                strValues += "'" + self.clean(self._aryValues[i][1]) + "',";
+                strValues += value + ",";
             }
         }
         strSQL = "INSERT INTO " + t + " (" + strNames + ") Values ( " + strValues + " );";
