@@ -52,7 +52,7 @@ module.exports = function sqlString(){
     this.clean = function(str){
         str += "";
         str = str.replace(/\'/ig,"''");
-        while(str.indexOf("\\")>-1){
+        while(str.indexOf("\\\\")>-1){
             str = str.replace(/\\\\/ig,"\\");
         }
         return str;
