@@ -58,19 +58,20 @@ module.exports = function sqlString(){
         return str;
     };
 
-    this.join = function(typ,t,w){
+    this.join = function(typ,t,w,a){
         var newAry, tableFound, cnt;
         tableFound = false;
         cnt = self._aryJoin.length;
         for(var i=0; i<cnt; i++){
-            if(self._aryJoin[i][0]==t){
+            if(self._aryJoin[i][0]==t && self._aryJoin[i][3]==a){
                 tableFound = true;
                 self._aryJoin[i][1] = w;
                 self._aryJoin[i][2] = typ;
+                self._aryJoin[i][3] = a;
             }
         }
         if(tableFound==false){
-            newAry = [t+'',w+'',typ+''];
+            newAry = [t+'',w+'',typ+'',a+''];
             self._aryJoin.push(newAry);
         }
     };
@@ -148,7 +149,9 @@ module.exports = function sqlString(){
         if(cnt>0){
             for(var i=0; i<cnt; i++){
                 if(self._aryJoin[i][2]!="") strSQL += " " + self._aryJoin[i][2];
-                strSQL += " JOIN " + self._aryJoin[i][0] + " on " + self._aryJoin[i][1];
+                strSQL += " JOIN " + self._aryJoin[i][0];
+                if(typeof self._aryJoin[i][3] !== 'undefined' && self._aryJoin[i][3]!=='') strSQL += " "+ self._aryJoin[i][3];
+                strSQL += " on " + self._aryJoin[i][1];
             }
         }
         if(w!="") strSQL += " WHERE " + w;
