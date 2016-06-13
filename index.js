@@ -170,7 +170,7 @@ module.exports = function sqlString(){
         strValues = "";
         var cnt = self._aryValues.length;
         for(var i=0; i<cnt; i++){
-            var value = "'" + self.clean(self._aryValues[i][1]) + "'"
+            var value = "'" + self.clean(self._aryValues[i][1]) + "'";
             if(self._aryValues[i][1]===null) value = null;
             if(i==(cnt-1)){
                 strNames += self._aryValues[i][0] + " ";
@@ -191,7 +191,7 @@ module.exports = function sqlString(){
         if(self._aryValues.length>0){
             cnt = self._aryValues.length;
             for(var i=0; i<cnt; i++){
-                var value = "'" + self.clean(self._aryValues[i][1]) + "'"
+                var value = "'" + self.clean(self._aryValues[i][1]) + "'";
                 if(self._aryValues[i][1]===null) value = null;
                 if(strValues==""){
                     strValues += " " + self._aryValues[i][0] + "=" + value;
